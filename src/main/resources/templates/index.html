@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${profile != null ? profile.name : 'Profile'}">Profile</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background: #f5f5f5;
+            color: #111827;
+        }
+        a { color: inherit; text-decoration: none; }
+        .page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 22px 48px;
+            background: #ffffff;
+        }
+        .brand {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #f59e0b;
+            display: inline-block;
+        }
+        .brand-name {
+            font-weight: 700;
+            letter-spacing: 0.2px;
+        }
+        .brand-role {
+            font-weight: 500;
+            color: #6b7280;
+            font-size: 13px;
+            letter-spacing: 0.2px;
+        }
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 12px;
+            letter-spacing: 0.4px;
+            color: #111827;
+        }
+        .nav a { padding: 6px 0; }
+        .sep { color: #d1d5db; }
+        .main {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            padding: 56px 48px 36px;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        .avatar-wrap {
+            display: flex;
+            justify-content: center;
+        }
+        .avatar {
+            width: min(460px, 70vw);
+            height: min(460px, 70vw);
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+            background: #e5e7eb;
+        }
+        .hero h1 {
+            font-size: 72px;
+            margin: 0;
+            letter-spacing: 0.3px;
+            color: #0b0f19;
+        }
+        .hero h2 {
+            font-size: 14px;
+            margin: 14px 0 10px;
+            letter-spacing: 0.8px;
+            text-transform: none;
+            color: #111827;
+        }
+        .hero p {
+            margin: 0;
+            max-width: 520px;
+            font-size: 13px;
+            line-height: 1.7;
+            color: #4b5563;
+        }
+        .cta {
+            display: flex;
+            gap: 16px;
+            margin-top: 26px;
+            flex-wrap: wrap;
+        }
+        .circle-btn {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            border: 1px solid rgba(0,0,0,0.12);
+            user-select: none;
+        }
+        .btn-resume { background: #f59e0b; }
+        .btn-projects { background: #ef4444; }
+        .btn-contact { background: #7dd3fc; }
+        .sections {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 48px 24px;
+        }
+        .section {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 22px 22px;
+            margin-bottom: 14px;
+        }
+        .section-title {
+            font-size: 14px;
+            font-weight: 800;
+            margin: 0 0 10px;
+            color: #111827;
+        }
+        .section-body {
+            font-size: 13px;
+            line-height: 1.7;
+            color: #4b5563;
+            margin: 0;
+        }
+        .footer {
+            border-top: 1px solid #e5e7eb;
+            background: #ffffff;
+            padding: 18px 48px;
+        }
+        .footer-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            align-items: center;
+        }
+        .footer-item-title {
+            font-size: 12px;
+            font-weight: 800;
+            margin: 0 0 6px;
+            color: #111827;
+        }
+        .footer-item-value {
+            font-size: 12px;
+            margin: 0;
+            color: #4b5563;
+            word-break: break-word;
+        }
+        .social {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .social a {
+            width: 22px;
+            height: 22px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+            color: #111827;
+        }
+        .copyright {
+            text-align: right;
+            font-size: 11px;
+            color: #6b7280;
+        }
+        @media (max-width: 900px) {
+            .topbar { padding: 18px 18px; }
+            .main {
+                grid-template-columns: 1fr;
+                padding: 28px 18px 20px;
+                gap: 22px;
+            }
+            .hero h1 { font-size: 56px; }
+            .sections { padding: 0 18px 18px; }
+            .footer { padding: 16px 18px; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .copyright { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <header class="topbar">
+            <div class="brand">
+                <span class="dot"></span>
+                <span class="brand-name" th:text="${profile != null ? profile.name : 'Nguyễn Huỳnh Quang Minh'}">Nicol Rider</span>
+                <span class="brand-role">Infomation Technology</span>
+            </div>
+            <nav class="nav">
+                <a th:href="@{/resume}">Resume</a>
+                <span class="sep">|</span>
+                <a th:href="@{/projects}">Projects</a>
+                <span class="sep">|</span>
+                <a th:href="@{/contact}">Contact</a>
+            </nav>
+        </header>
+
+        <main class="main">
+            <div class="avatar-wrap">
+                <img class="avatar"
+                     th:src="${profile != null && profile.imageUrl != null ? profile.imageUrl : 'https://via.placeholder.com/600'}"
+                     alt="Avatar"/>
+            </div>
+
+            <div class="hero">
+                <h1>Hello</h1>
+                <h2>A Bit About Me</h2>
+                <p th:text="${profile != null && profile.description != null && !profile.description.isEmpty() ? profile.description : 'Tôi là một lập trình viên Fullstack đầy nhiệt huyết, yêu thích công nghệ và luôn học hỏi điều mới.'}">
+                </p>
+
+                <div class="cta">
+                    <a class="circle-btn btn-resume" th:href="@{/resume}">Resume</a>
+                    <a class="circle-btn btn-projects" th:href="@{/projects}">Projects</a>
+                    <a class="circle-btn btn-contact" th:href="@{/contact}">Contact</a>
+                </div>
+
+                <div style="margin-top: 18px;" th:if="${profile != null && profile.id != null}">
+                    <a th:href="@{'/person/' + ${profile.id}}" style="font-size: 12px; color: #2563eb; font-weight: 700;">
+                        Chỉnh sửa thông tin cá nhân →
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-grid">
+                <div>
+                    <p class="footer-item-title">Phone</p>
+                    <p class="footer-item-value" th:text="${profile != null ? profile.phone : ''}">123-456-7890</p>
+                </div>
+                <div>
+                    <p class="footer-item-title">Email</p>
+                    <p class="footer-item-value">
+                        <a th:href="${profile != null && profile.email != null ? 'mailto:' + profile.email : '#'}"
+                           th:text="${profile != null ? profile.email : ''}">
+                            info@mysite.com
+                        </a>
+                    </p>
+                </div>
+                <div class="copyright">
+                    <span th:text="${profile != null ? '© ' + #dates.format(#dates.createNow(), 'yyyy') + ' By ' + profile.name : ''}"></span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

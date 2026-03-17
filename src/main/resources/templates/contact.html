@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${profile != null ? 'Contact - ' + profile.name : 'Contact'}">Contact</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background: #f5f5f5;
+            color: #111827;
+        }
+        a { color: inherit; text-decoration: none; }
+        .page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 22px 48px;
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .brand {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #f59e0b;
+            display: inline-block;
+        }
+        .brand-name {
+            font-weight: 700;
+            letter-spacing: 0.2px;
+        }
+        .brand-role {
+            font-weight: 500;
+            color: #6b7280;
+            font-size: 13px;
+            letter-spacing: 0.2px;
+        }
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 12px;
+            letter-spacing: 0.4px;
+            color: #111827;
+        }
+        .nav a { padding: 6px 0; }
+        .nav a.active { border-bottom: 2px solid #111827; }
+        .sep { color: #d1d5db; }
+        .content {
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 34px 48px 40px;
+        }
+        .title {
+            margin: 0 0 6px;
+            font-size: 40px;
+            letter-spacing: 0.3px;
+            color: #0b0f19;
+        }
+        .subtitle {
+            margin: 0 0 18px;
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 18px;
+        }
+        .card-title {
+            margin: 0 0 10px;
+            font-size: 14px;
+            font-weight: 900;
+            color: #111827;
+        }
+        .row {
+            display: grid;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .label {
+            font-size: 12px;
+            font-weight: 800;
+            color: #111827;
+        }
+        .value {
+            font-size: 13px;
+            color: #4b5563;
+            line-height: 1.6;
+            word-break: break-word;
+        }
+        .input, .textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 13px;
+            outline: none;
+        }
+        .textarea { min-height: 130px; resize: vertical; }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.12);
+            background: #111827;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .alert {
+            border-radius: 14px;
+            padding: 12px 14px;
+            margin: 0 0 16px;
+            font-size: 13px;
+            line-height: 1.6;
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+        }
+        .alert-success {
+            border-color: rgba(16,185,129,0.35);
+            background: rgba(16,185,129,0.08);
+            color: #065f46;
+        }
+        .alert-error {
+            border-color: rgba(239,68,68,0.35);
+            background: rgba(239,68,68,0.08);
+            color: #7f1d1d;
+        }
+        .honeypot {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+            height: 0;
+            width: 0;
+            overflow: hidden;
+        }
+        .hint {
+            margin: 10px 0 0;
+            font-size: 12px;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+        .footer {
+            border-top: 1px solid #e5e7eb;
+            background: #ffffff;
+            padding: 18px 48px;
+        }
+        .footer-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            color: #6b7280;
+        }
+        @media (max-width: 900px) {
+            .topbar { padding: 18px 18px; }
+            .content { padding: 26px 18px 28px; }
+            .grid { grid-template-columns: 1fr; }
+            .footer { padding: 16px 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <header class="topbar">
+            <a class="brand" th:href="@{/}">
+                <span class="dot"></span>
+                <span class="brand-name" th:text="${profile != null ? profile.name : 'Your Name'}">Your Name</span>
+                <span class="brand-role">Infomation Technology</span>
+            </a>
+            <nav class="nav">
+                <a th:href="@{/resume}">Resume</a>
+                <span class="sep">|</span>
+                <a th:href="@{/projects}">Projects</a>
+                <span class="sep">|</span>
+                <a class="active" th:href="@{/contact}">Contact</a>
+            </nav>
+        </header>
+
+        <main class="content">
+            <h1 class="title">Contact</h1>
+            <div class="alert alert-success" th:if="${contactSuccess != null}" th:text="${contactSuccess}"></div>
+            <div class="alert alert-error" th:if="${contactError != null}" th:text="${contactError}"></div>
+            <div class="grid">
+                <section class="card">
+                    <h2 class="card-title">Contact Info</h2>
+                    <div class="row">
+                        <div class="label">Email</div>
+                        <div class="value">
+                            <a th:href="${profile != null && profile.email != null ? 'mailto:' + profile.email : 'mailto:your.email@example.com'}"
+                               th:text="${profile != null && profile.email != null ? profile.email : 'your.email@example.com'}">
+                                your.email@example.com
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="label">Phone</div>
+                        <div class="value" th:text="${profile != null && profile.phone != null ? profile.phone : '0900 000 000'}">0900 000 000</div>
+                    </div>
+                    <div class="row">
+                        <div class="label">Location</div>
+                        <div class="value" th:text="${profile != null && profile.address != null ? profile.address : 'TP. Hồ Chí Minh, Việt Nam'}">TP. Hồ Chí Minh, Việt Nam</div>
+                    </div>
+                    <div class="row">
+                        <div class="label">Social</div>
+                        <div class="value">
+                            <a href="https://github.com/KENTksl" target="_blank" rel="noreferrer">GitHub</a> •
+                            <a href="https://www.facebook.com/quang.minh.217196/" target="_blank" rel="noreferrer">Facebook</a>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card">
+                    <h2 class="card-title">Send a Message</h2>
+                    <form th:action="@{/contact}" method="post">
+                        <div class="honeypot" aria-hidden="true">
+                            <label for="website">Website</label>
+                            <input id="website" name="website" type="text" tabindex="-1" autocomplete="new-password" inputmode="none" value=""/>
+                        </div>
+                        <div class="row">
+                            <label class="label" for="name">Name</label>
+                            <input class="input" id="name" name="name" type="text" placeholder="Your name" required="required" th:value="${contactName != null ? contactName : ''}"/>
+                        </div>
+                        <div class="row">
+                            <label class="label" for="email">Email</label>
+                            <input class="input" id="email" name="email" type="email" placeholder="your.email@example.com" required="required" th:value="${contactEmail != null ? contactEmail : ''}"/>
+                        </div>
+                        <div class="row">
+                            <label class="label" for="message">Message</label>
+                            <textarea class="textarea" id="message" name="message" required="required" placeholder="Xin chào, mình muốn trao đổi về..." th:text="${contactMessage != null ? contactMessage : ''}"></textarea>
+                        </div>
+                        <button class="btn" type="submit">Send</button>
+
+                    </form>
+                </section>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-inner">
+                <span th:text="${profile != null ? profile.email : 'your.email@example.com'}">your.email@example.com</span>
+                <span th:text="${profile != null ? profile.phone : '0900 000 000'}">0900 000 000</span>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

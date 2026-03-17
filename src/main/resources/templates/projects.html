@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${profile != null ? 'Projects - ' + profile.name : 'Projects'}">Projects</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background: #f5f5f5;
+            color: #111827;
+        }
+        a { color: inherit; text-decoration: none; }
+        .page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 22px 48px;
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .brand {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #f59e0b;
+            display: inline-block;
+        }
+        .brand-name {
+            font-weight: 700;
+            letter-spacing: 0.2px;
+        }
+        .brand-role {
+            font-weight: 500;
+            color: #6b7280;
+            font-size: 13px;
+            letter-spacing: 0.2px;
+        }
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 12px;
+            letter-spacing: 0.4px;
+            color: #111827;
+        }
+        .nav a { padding: 6px 0; }
+        .nav a.active { border-bottom: 2px solid #111827; }
+        .sep { color: #d1d5db; }
+        .content {
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 34px 48px 40px;
+        }
+        .title {
+            margin: 0 0 6px;
+            font-size: 40px;
+            letter-spacing: 0.3px;
+            color: #0b0f19;
+        }
+        .subtitle {
+            margin: 0 0 18px;
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .btn-primary {
+            background: #111827;
+            color: #ffffff;
+            border-color: rgba(0,0,0,0.12);
+        }
+        .btn-danger {
+            background: #ef4444;
+            color: #ffffff;
+            border-color: rgba(0,0,0,0.12);
+        }
+        .btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        .card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 18px;
+            display: grid;
+            gap: 10px;
+            position: relative;
+        }
+        .add-card {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 70px;
+            border: 2px dashed #d1d5db;
+            color: #6b7280;
+            font-size: 13px;
+            font-weight: 900;
+            cursor: pointer;
+            user-select: none;
+            border-radius: 16px;
+            background: #ffffff;
+        }
+        .editing .add-card { display: flex; }
+        .add-card:hover {
+            border-color: #9ca3af;
+            color: #111827;
+        }
+        .card-title {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 900;
+            color: #111827;
+        }
+        .card-desc {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.7;
+            color: #4b5563;
+        }
+        .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+        .tag {
+            font-size: 12px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+            color: #111827;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+        .tag-text {
+            display: inline-flex;
+            align-items: center;
+            min-width: 8px;
+        }
+        .tag-remove {
+            display: none;
+            position: absolute;
+            top: 50%;
+            right: 6px;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            border-radius: 999px;
+            border: 1px solid rgba(0,0,0,0.12);
+            background: #ffffff;
+            color: #111827;
+            font-size: 12px;
+            line-height: 1;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 0;
+        }
+        .editing .tag { padding-right: 30px; }
+        .editing .tag-remove { display: inline-flex; }
+        .tag-add {
+            display: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            border: 1px dashed rgba(0,0,0,0.25);
+            background: #ffffff;
+            color: #111827;
+            font-size: 16px;
+            font-weight: 900;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 0;
+        }
+        .editing .tag-add { display: inline-flex; }
+        .links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+        .link {
+            font-size: 12px;
+            font-weight: 800;
+            color: #2563eb;
+        }
+        .editing [data-editable='true'][contenteditable="true"] {
+            border-radius: 12px;
+            transition: box-shadow 140ms ease, background 140ms ease;
+        }
+        .editing [data-editable='true'][contenteditable="true"]:hover {
+            box-shadow: 0 0 0 2px rgba(59,130,246,0.18);
+        }
+        .editing [data-editable='true'][contenteditable="true"]:focus {
+            outline: none;
+            background: rgba(59,130,246,0.06);
+            box-shadow: 0 0 0 2px rgba(59,130,246,0.32);
+        }
+        .block-remove {
+            display: none;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 28px;
+            height: 28px;
+            border-radius: 10px;
+            border: 1px solid rgba(0,0,0,0.12);
+            background: #ffffff;
+            color: #111827;
+            font-size: 16px;
+            font-weight: 900;
+            line-height: 1;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            z-index: 2;
+        }
+        .editing .block-remove { display: inline-flex; }
+        .editing .block-remove:hover {
+            background: #ef4444;
+            color: #ffffff;
+            border-color: rgba(0,0,0,0.12);
+        }
+        .editor-panel {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            width: min(380px, calc(100vw - 36px));
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+            padding: 14px;
+            display: none;
+            z-index: 50;
+            max-height: calc(100vh - 36px);
+            overflow: hidden;
+        }
+        .editing .editor-panel { display: block; }
+        .editor-panel.collapsed {
+            width: min(260px, calc(100vw - 36px));
+            padding: 10px;
+        }
+        .editor-panel.collapsed .panel-sub,
+        .editor-panel.collapsed .tpl-grid,
+        .editor-panel.collapsed .panel-actions,
+        .editor-panel.collapsed .status {
+            display: none;
+        }
+        .panel-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .panel-title {
+            margin: 0;
+            font-size: 13px;
+            font-weight: 900;
+            color: #111827;
+        }
+        .panel-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+            font-size: 14px;
+            font-weight: 900;
+            cursor: pointer;
+            user-select: none;
+        }
+        .panel-body {
+            margin-top: 10px;
+            overflow: auto;
+            max-height: calc(100vh - 120px);
+            padding-right: 6px;
+        }
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(17,24,39,0.55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            z-index: 80;
+        }
+        .modal {
+            width: min(640px, calc(100vw - 36px));
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            box-shadow: 0 18px 40px rgba(0,0,0,0.22);
+            overflow: hidden;
+        }
+        .modal-header {
+            display: flex;
+            align-items: start;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 14px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .modal-title {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 900;
+            color: #111827;
+        }
+        .modal-sub {
+            margin: 4px 0 0;
+            font-size: 12px;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+            font-size: 16px;
+            font-weight: 900;
+            cursor: pointer;
+            user-select: none;
+            line-height: 1;
+        }
+        .modal-body {
+            padding: 14px;
+            display: grid;
+            gap: 10px;
+        }
+        .modal-label {
+            font-size: 12px;
+            font-weight: 900;
+            color: #111827;
+        }
+        .modal-textarea {
+            width: 100%;
+            min-height: 220px;
+            resize: vertical;
+            padding: 10px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.6;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+        .modal-hint {
+            font-size: 12px;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+        .modal-actions {
+            display: flex;
+            justify-content: end;
+            gap: 10px;
+            padding: 12px 14px;
+            border-top: 1px solid #e5e7eb;
+            background: #ffffff;
+        }
+        .panel-sub {
+            margin: 0 0 12px;
+            font-size: 12px;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+        .tpl-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        .tpl-group {
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 10px;
+        }
+        .tpl-group-title {
+            margin: 0 0 8px;
+            font-size: 12px;
+            font-weight: 900;
+            color: #111827;
+        }
+        .tpl-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .tpl {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+            font-size: 12px;
+            color: #111827;
+            cursor: grab;
+            user-select: none;
+        }
+        .tpl:active { cursor: grabbing; }
+        .panel-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .status {
+            margin: 10px 0 0;
+            font-size: 12px;
+            color: #6b7280;
+            line-height: 1.6;
+            min-height: 18px;
+        }
+        .footer {
+            border-top: 1px solid #e5e7eb;
+            background: #ffffff;
+            padding: 18px 48px;
+        }
+        .footer-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            color: #6b7280;
+        }
+        @media (max-width: 900px) {
+            .topbar { padding: 18px 18px; }
+            .content { padding: 26px 18px 28px; }
+            .grid { grid-template-columns: 1fr; }
+            .footer { padding: 16px 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <header class="topbar">
+            <a class="brand" th:href="@{/}">
+                <span class="dot"></span>
+                <span class="brand-name" th:text="${profile != null ? profile.name : 'Your Name'}">Your Name</span>
+                <span class="brand-role">Infomation Technology</span>
+            </a>
+            <nav class="nav">
+                <a th:href="@{/resume}">Resume</a>
+                <span class="sep">|</span>
+                <a class="active" th:href="@{/projects}">Projects</a>
+                <span class="sep">|</span>
+                <a th:href="@{/contact}">Contact</a>
+            </nav>
+        </header>
+
+        <main class="content">
+            <div style="display: flex; align-items: end; justify-content: space-between; gap: 14px; flex-wrap: wrap;">
+                <div>
+                    <h1 class="title">Projects</h1>
+                </div>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" id="editBtn" type="button">Chỉnh sửa</button>
+                </div>
+            </div>
+
+            <div id="projectsContent">
+                <p class="subtitle editable" data-editable="true">
+                    Dữ liệu mẫu. Bạn thay Title/Description/Tech/Links theo dự án thật của bạn.
+                </p>
+
+                <div class="grid">
+                    <article class="card editable" data-editable="true">
+                        <h2 class="card-title">Profile Website</h2>
+                        <p class="card-desc">
+                            Website profile có trang Home/Resume/Projects/Contact, CRUD thông tin cá nhân và upload ảnh.
+                        </p>
+                        <div class="meta">
+                            <span class="tag">Java</span>
+                            <span class="tag">Spring Boot</span>
+                            <span class="tag">Thymeleaf</span>
+                            <span class="tag">MySQL</span>
+                            <span class="tag">Docker</span>
+                        </div>
+                        <div class="links">
+                            <a class="link" href="#" target="_blank" rel="noreferrer">Live Demo</a>
+                            <a class="link" href="#" target="_blank" rel="noreferrer">Source Code</a>
+                        </div>
+                    </article>
+
+                    <article class="card editable" data-editable="true">
+                        <h2 class="card-title">E-commerce API</h2>
+                        <p class="card-desc">
+                            REST API cho hệ thống bán hàng: đăng nhập, sản phẩm, giỏ hàng, đơn hàng, phân quyền.
+                        </p>
+                        <div class="meta">
+                            <span class="tag">Spring Security</span>
+                            <span class="tag">JWT</span>
+                            <span class="tag">JPA/Hibernate</span>
+                            <span class="tag">Redis</span>
+                        </div>
+                        <div class="links">
+                            <a class="link" href="#" target="_blank" rel="noreferrer">Postman Collection</a>
+                            <a class="link" href="#" target="_blank" rel="noreferrer">Source Code</a>
+                        </div>
+                    </article>
+
+                    <article class="card editable" data-editable="true">
+                        <h2 class="card-title">Task Manager</h2>
+                        <p class="card-desc">
+                            Ứng dụng quản lý công việc: board, drag & drop, nhắc việc, thống kê.
+                        </p>
+                        <div class="meta">
+                            <span class="tag">React</span>
+                            <span class="tag">Node.js</span>
+                            <span class="tag">MongoDB</span>
+                        </div>
+                        <div class="links">
+                            <a class="link" href="#" target="_blank" rel="noreferrer">Live Demo</a>
+                            <a class="link" href="#" target="_blank" rel="noreferrer">Source Code</a>
+                        </div>
+                    </article>
+
+                    <article class="card editable" data-editable="true">
+                        <h2 class="card-title">Portfolio Design System</h2>
+                        <p class="card-desc">
+                            Bộ UI component (button, card, form) dùng lại cho nhiều trang portfolio.
+                        </p>
+                        <div class="meta">
+                            <span class="tag">HTML</span>
+                            <span class="tag">CSS</span>
+                            <span class="tag">Responsive</span>
+                        </div>
+                        <div class="links">
+                            <a class="link" href="#" target="_blank" rel="noreferrer">Preview</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+            <div class="add-card" id="addInlineCard">＋ Kéo template vào đây hoặc bấm để thêm dự án</div>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-inner">
+                <span th:text="${profile != null ? profile.email : 'your.email@example.com'}">your.email@example.com</span>
+                <span th:text="${profile != null ? profile.phone : '0900 000 000'}">0900 000 000</span>
+            </div>
+        </footer>
+    </div>
+
+    <div class="editor-panel" id="editorPanel">
+        <div class="panel-head">
+            <p class="panel-title">Templates</p>
+            <button class="panel-toggle" id="panelToggle" type="button">−</button>
+        </div>
+        <div class="panel-body">
+            <p class="panel-sub">Bật Chỉnh sửa, click vào card bạn muốn sửa, rồi kéo thả template vào.</p>
+            <div class="tpl-grid">
+                <div class="tpl-group">
+                    <p class="tpl-group-title">Project title</p>
+                    <div class="tpl-items">
+                        <div class="tpl" draggable="true" data-tpl-id="p_title_shop" data-insert="Online Shop API">Online Shop API</div>
+                        <div class="tpl" draggable="true" data-tpl-id="p_title_student" data-insert="Student Management System">Student Management</div>
+                        <div class="tpl" draggable="true" data-tpl-id="p_title_job" data-insert="Job Portal Website">Job Portal</div>
+                    </div>
+                </div>
+                <div class="tpl-group">
+                    <p class="tpl-group-title">Description (VN)</p>
+                    <div class="tpl-items">
+                        <div class="tpl" draggable="true" data-tpl-id="p_desc_vn_api" data-insert="Xây dựng hệ thống REST API, hỗ trợ CRUD, phân trang, lọc dữ liệu và validation.">API CRUD</div>
+                        <div class="tpl" draggable="true" data-tpl-id="p_desc_vn_db" data-insert="Thiết kế database, tối ưu query, bổ sung index để cải thiện hiệu năng.">DB optimization</div>
+                        <div class="tpl" draggable="true" data-tpl-id="p_desc_vn_docker" data-insert="Triển khai bằng Docker Compose để chạy nhanh trên mọi máy.">Docker deploy</div>
+                    </div>
+                </div>
+                <div class="tpl-group">
+                    <p class="tpl-group-title">Description (EN)</p>
+                    <div class="tpl-items">
+                        <div class="tpl" draggable="true" data-tpl-id="p_desc_en_api" data-insert="Built a RESTful API with CRUD, pagination, filtering, and validation.">API CRUD</div>
+                        <div class="tpl" draggable="true" data-tpl-id="p_desc_en_db" data-insert="Designed the database schema and optimized queries with proper indexing.">DB optimization</div>
+                        <div class="tpl" draggable="true" data-tpl-id="p_desc_en_docker" data-insert="Containerized the application with Docker Compose for reproducible setup.">Docker</div>
+                    </div>
+                </div>
+                <div class="tpl-group">
+                    <p class="tpl-group-title">Tech tags</p>
+                    <div class="tpl-items">
+                        <div class="tpl" draggable="true" data-tpl-id="p_tag_spring_boot" data-insert="<span class='tag'>Spring Boot</span>">Spring Boot</div>
+                        <div class="tpl" draggable="true" data-tpl-id="p_tag_spring_security" data-insert="<span class='tag'>Spring Security</span>">Spring Security</div>
+                        <div class="tpl" draggable="true" data-tpl-id="p_tag_jwt" data-insert="<span class='tag'>JWT</span>">JWT</div>
+                        <div class="tpl" draggable="true" data-tpl-id="p_tag_mysql" data-insert="<span class='tag'>MySQL</span>">MySQL</div>
+                        <div class="tpl" draggable="true" data-tpl-id="p_tag_postgres" data-insert="<span class='tag'>PostgreSQL</span>">PostgreSQL</div>
+                        <div class="tpl" draggable="true" data-tpl-id="p_tag_redis" data-insert="<span class='tag'>Redis</span>">Redis</div>
+                        <div class="tpl" draggable="true" data-tpl-id="p_tag_docker" data-insert="<span class='tag'>Docker</span>">Docker</div>
+                        <div class="tpl" draggable="true" data-tpl-id="p_tag_compose" data-insert="<span class='tag'>Docker Compose</span>">Docker Compose</div>
+                        <div class="tpl" draggable="true" data-tpl-id="p_tag_k8s" data-insert="<span class='tag'>Kubernetes</span>">Kubernetes</div>
+                        <div class="tpl" draggable="true" data-tpl-id="p_tag_react" data-insert="<span class='tag'>React</span>">React</div>
+                        <div class="tpl" draggable="true" data-tpl-id="p_tag_vue" data-insert="<span class='tag'>Vue</span>">Vue</div>
+                        <div class="tpl" draggable="true" data-tpl-id="p_tag_ts" data-insert="<span class='tag'>TypeScript</span>">TypeScript</div>
+                        <div class="tpl" draggable="true" data-tpl-id="p_tag_tailwind" data-insert="<span class='tag'>Tailwind</span>">Tailwind</div>
+                        <div class="tpl" draggable="true" data-tpl-id="p_tag_aws" data-insert="<span class='tag'>AWS</span>">AWS</div>
+                        <div class="tpl" draggable="true" data-tpl-id="p_tag_gcp" data-insert="<span class='tag'>GCP</span>">GCP</div>
+                    </div>
+                </div>
+                <div class="tpl-group">
+                    <p class="tpl-group-title">Links</p>
+                    <div class="tpl-items">
+                        <div class="tpl" draggable="true" data-tpl-id="p_link_demo" data-insert="<a class='link' href='#' target='_blank' rel='noreferrer'>Live Demo</a>">Live Demo</div>
+                        <div class="tpl" draggable="true" data-tpl-id="p_link_source" data-insert="<a class='link' href='#' target='_blank' rel='noreferrer'>Source Code</a>">Source Code</div>
+                        <div class="tpl" draggable="true" data-tpl-id="p_link_docs" data-insert="<a class='link' href='#' target='_blank' rel='noreferrer'>Documentation</a>">Docs</div>
+                    </div>
+                </div>
+                <div class="tpl-group">
+                    <p class="tpl-group-title">Blocks</p>
+                    <div class="tpl-items">
+                        <div class="tpl" draggable="true" data-tpl-id="p_block_project" data-insert="<article class='card editable' data-editable='true'><h2 class='card-title'>New Project</h2><p class='card-desc'>Write description here...</p><div class='meta'><span class='tag'>Tech 1</span><span class='tag'>Tech 2</span></div><div class='links'><a class='link' href='#' target='_blank' rel='noreferrer'>Live Demo</a><a class='link' href='#' target='_blank' rel='noreferrer'>Source Code</a></div></article>">New project card</div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-actions">
+                <button class="btn" id="copyBtn" type="button">Copy template</button>
+                <button class="btn" id="clearStatusBtn" type="button">Clear</button>
+            </div>
+            <p class="status" id="status"></p>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="tplModal" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="tplModalTitle">
+            <div class="modal-header">
+                <div>
+                    <p class="modal-title" id="tplModalTitle">Sửa nội dung template</p>
+                    <p class="modal-sub" id="tplModalSub"></p>
+                </div>
+                <button class="modal-close" id="tplModalClose" type="button">×</button>
+            </div>
+            <div class="modal-body">
+                <label class="modal-label" for="tplModalContent">Nội dung chèn (text hoặc HTML)</label>
+                <textarea class="modal-textarea" id="tplModalContent"></textarea>
+                <div class="modal-hint">Ví dụ tag: &lt;span class='tag'&gt;Docker&lt;/span&gt; | Ví dụ card: &lt;article class='card'&gt;...&lt;/article&gt;</div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn" id="tplModalCancel" type="button">Hủy</button>
+                <button class="btn btn-primary" id="tplModalSave" type="button">Lưu</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const STORAGE_KEY = "projects.content.v1";
+            const TEMPLATE_OVERRIDES_KEY = "projects.templates.overrides.v1";
+            const projectsContent = document.getElementById("projectsContent");
+            const editBtn = document.getElementById("editBtn");
+            const addInlineCard = document.getElementById("addInlineCard");
+            const statusEl = document.getElementById("status");
+            const editorPanel = document.getElementById("editorPanel");
+            const panelToggle = document.getElementById("panelToggle");
+            const copyBtn = document.getElementById("copyBtn");
+            const clearStatusBtn = document.getElementById("clearStatusBtn");
+            const tplModal = document.getElementById("tplModal");
+            const tplModalClose = document.getElementById("tplModalClose");
+            const tplModalCancel = document.getElementById("tplModalCancel");
+            const tplModalSave = document.getElementById("tplModalSave");
+            const tplModalContent = document.getElementById("tplModalContent");
+            const tplModalSub = document.getElementById("tplModalSub");
+
+            let editing = false;
+            let lastTemplate = "";
+            let cleanupTimer = null;
+            let autosaveTimer = null;
+            let editingTemplateEl = null;
+
+            function tagText(tag) {
+                const clone = tag.cloneNode(true);
+                clone.querySelectorAll(".tag-remove").forEach((b) => b.remove());
+                clone.querySelectorAll(".tag-add").forEach((b) => b.remove());
+                return (clone.textContent || "").trim();
+            }
+
+            function cleanupEmptyTags(root) {
+                const tags = root.querySelectorAll(".tag");
+                tags.forEach((tag) => {
+                    if (!tagText(tag)) {
+                        tag.remove();
+                    }
+                });
+            }
+
+            function enhanceTags(root) {
+                root.querySelectorAll(".tag").forEach((tag) => {
+                    if (tag.getAttribute("data-enhanced") === "true") return;
+                    tag.setAttribute("data-enhanced", "true");
+
+                    let textWrap = tag.querySelector(".tag-text");
+                    if (!textWrap) {
+                        textWrap = document.createElement("span");
+                        textWrap.className = "tag-text";
+                        textWrap.setAttribute("data-tag-text", "true");
+                        const nodes = Array.from(tag.childNodes).filter((n) => {
+                            if (n.nodeType === Node.ELEMENT_NODE) {
+                                const el = n;
+                                return !el.classList.contains("tag-remove");
+                            }
+                            return true;
+                        });
+                        nodes.forEach((n) => textWrap.appendChild(n));
+                        tag.insertBefore(textWrap, tag.firstChild);
+                    }
+
+                    const btn = document.createElement("button");
+                    btn.type = "button";
+                    btn.className = "tag-remove";
+                    btn.setAttribute("contenteditable", "false");
+                    btn.setAttribute("aria-label", "Remove");
+                    btn.textContent = "×";
+                    tag.appendChild(btn);
+                });
+
+                root.querySelectorAll(".meta").forEach((container) => {
+                    if (container.getAttribute("data-tags-enhanced") === "true") return;
+                    container.setAttribute("data-tags-enhanced", "true");
+                    const addBtn = document.createElement("button");
+                    addBtn.type = "button";
+                    addBtn.className = "tag-add";
+                    addBtn.setAttribute("contenteditable", "false");
+                    addBtn.setAttribute("aria-label", "Add");
+                    addBtn.textContent = "+";
+                    container.appendChild(addBtn);
+                });
+            }
+
+            function setTagTextEditable(root, enabled) {
+                root.querySelectorAll(".tag-text").forEach((el) => {
+                    el.setAttribute("contenteditable", enabled ? "true" : "false");
+                });
+            }
+
+            function normalizeTagHtml(htmlOrText) {
+                const trimmed = (htmlOrText || "").trim();
+                if (!trimmed) return "";
+                if (trimmed.includes("<span") && trimmed.includes("class='tag'")) return trimmed;
+                if (trimmed.includes("<span") && trimmed.includes('class="tag"')) return trimmed;
+                const esc = trimmed.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+                return "<span class='tag'>" + esc + "</span>";
+            }
+
+            function setStatus(text) {
+                statusEl.textContent = text || "";
+            }
+
+            function setPanelCollapsed(collapsed) {
+                editorPanel.classList.toggle("collapsed", collapsed);
+                panelToggle.textContent = collapsed ? "+" : "−";
+                localStorage.setItem("projects.panel.collapsed", collapsed ? "1" : "0");
+            }
+
+            function enhanceRemovableBlocks(root) {
+                root.querySelectorAll(".card").forEach((block) => {
+                    if (!(block instanceof Element)) return;
+                    if (block.classList.contains("add-card")) return;
+                    if (block.getAttribute("data-removable-enhanced") === "true") return;
+                    if (!block.classList.contains("editable") && block.getAttribute("data-editable") !== "true") return;
+                    block.setAttribute("data-removable-enhanced", "true");
+                    const btn = document.createElement("button");
+                    btn.type = "button";
+                    btn.className = "block-remove";
+                    btn.setAttribute("contenteditable", "false");
+                    btn.setAttribute("aria-label", "Delete");
+                    btn.textContent = "×";
+                    block.appendChild(btn);
+                });
+            }
+
+            function applyEditingState(root) {
+                const elements = root.querySelectorAll("[data-editable='true']");
+                elements.forEach((el) => {
+                    const isMeta = el.classList.contains("meta");
+                    el.setAttribute("contenteditable", editing && !isMeta ? "true" : "false");
+                });
+                enhanceTags(root);
+                setTagTextEditable(root, editing);
+                enhanceRemovableBlocks(root);
+            }
+
+            function setEditable(enabled) {
+                document.body.classList.toggle("editing", enabled);
+                editing = enabled;
+                editBtn.textContent = enabled ? "Thoát chỉnh sửa" : "Chỉnh sửa";
+                if (!enabled) {
+                    cleanupEmptyTags(projectsContent);
+                    autosaveNow();
+                    setStatus("");
+                }
+                if (enabled) {
+                    editorPanel.scrollTop = 0;
+                    setStatus("Mẹo: Click vào link khi đang chỉnh sửa để sửa URL.");
+                }
+                applyEditingState(projectsContent);
+            }
+
+            function addProject() {
+                if (!editing) return;
+                const grid = projectsContent.querySelector(".grid");
+                if (!grid) return;
+                const html = "<article class='card editable' data-editable='true'><h2 class='card-title'>New Project</h2><p class='card-desc'>Write description here...</p><div class='meta'><span class='tag'>Tech 1</span><span class='tag'>Tech 2</span></div><div class='links'><a class='link' href='#' target='_blank' rel='noreferrer'>Live Demo</a><a class='link' href='#' target='_blank' rel='noreferrer'>Source Code</a></div></article>";
+                grid.insertAdjacentHTML("beforeend", html);
+                applyEditingState(projectsContent);
+                autosaveSoon();
+                setStatus("Đã thêm dự án mới.");
+                const last = grid.querySelector("article.card.editable:last-of-type");
+                if (last) {
+                    const focusEl = last.querySelector("[data-editable='true'][contenteditable='true']");
+                    if (focusEl && focusEl instanceof HTMLElement) focusEl.focus();
+                }
+            }
+
+            function loadSaved() {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    projectsContent.innerHTML = saved;
+                }
+            }
+
+            function saveNow() {
+                cleanupEmptyTags(projectsContent);
+                localStorage.setItem(STORAGE_KEY, projectsContent.innerHTML);
+                setStatus("Đã lưu trên trình duyệt (local).");
+            }
+
+            function autosaveNow() {
+                cleanupEmptyTags(projectsContent);
+                localStorage.setItem(STORAGE_KEY, projectsContent.innerHTML);
+            }
+
+            function autosaveSoon() {
+                if (!editing) return;
+                if (autosaveTimer) clearTimeout(autosaveTimer);
+                autosaveTimer = setTimeout(autosaveNow, 400);
+            }
+
+            function refreshAfterInsert() {
+                enhanceTags(projectsContent);
+                setTagTextEditable(projectsContent, editing);
+                enhanceRemovableBlocks(projectsContent);
+            }
+
+            function insertAtCursor(target, htmlOrText) {
+                const isMeta = target.classList && target.classList.contains("meta");
+                if (isMeta) {
+                    target.insertAdjacentHTML("beforeend", htmlOrText);
+                    refreshAfterInsert();
+                    autosaveSoon();
+                    return;
+                }
+
+                target.focus();
+                const selection = window.getSelection();
+                if (!selection) {
+                    target.insertAdjacentHTML("beforeend", htmlOrText);
+                    refreshAfterInsert();
+                    autosaveSoon();
+                    return;
+                }
+
+                if (selection.rangeCount === 0) {
+                    target.insertAdjacentHTML("beforeend", htmlOrText);
+                    refreshAfterInsert();
+                    autosaveSoon();
+                    return;
+                }
+
+                const range = selection.getRangeAt(0);
+                const isInside = target.contains(range.commonAncestorContainer);
+                if (!isInside) {
+                    target.insertAdjacentHTML("beforeend", htmlOrText);
+                    refreshAfterInsert();
+                    autosaveSoon();
+                    return;
+                }
+
+                range.deleteContents();
+
+                const container = document.createElement("div");
+                container.innerHTML = htmlOrText;
+                const frag = document.createDocumentFragment();
+                let node;
+                let lastNode = null;
+                while ((node = container.firstChild)) {
+                    lastNode = frag.appendChild(node);
+                }
+                range.insertNode(frag);
+
+                if (lastNode) {
+                    range.setStartAfter(lastNode);
+                    range.setEndAfter(lastNode);
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                }
+                refreshAfterInsert();
+                autosaveSoon();
+            }
+
+            function getEditableTarget(e) {
+                const t = e.target;
+                if (!(t instanceof Element)) return null;
+                const editable = t.closest("[data-editable='true']");
+                if (!editable) return null;
+                if (editable.classList.contains("meta")) return editable;
+                if (editable.getAttribute("contenteditable") !== "true") return null;
+                return editable;
+            }
+
+            function bindEditableDnD(root) {
+                root.addEventListener("dragover", (e) => {
+                    if (!editing) return;
+                    const editable = getEditableTarget(e);
+                    if (!editable) return;
+                    e.preventDefault();
+                });
+
+                root.addEventListener("drop", (e) => {
+                    if (!editing) return;
+                    const editable = getEditableTarget(e);
+                    if (!editable) return;
+                    e.preventDefault();
+                    const payload = e.dataTransfer ? (e.dataTransfer.getData("text/plain") || "") : "";
+                    if (!payload) return;
+                    const html = editable.classList.contains("meta") ? normalizeTagHtml(payload) : payload;
+                    insertAtCursor(editable, html);
+                });
+            }
+
+            function bindTemplateDnD() {
+                const templates = editorPanel.querySelectorAll(".tpl[data-insert]");
+                templates.forEach((tpl) => {
+                    tpl.addEventListener("dblclick", () => {
+                        openTemplateModal(tpl);
+                    });
+                    tpl.addEventListener("dragstart", (e) => {
+                        const value = tpl.getAttribute("data-insert") || "";
+                        lastTemplate = value;
+                        if (e.dataTransfer) {
+                            e.dataTransfer.setData("text/plain", value);
+                        }
+                        setStatus("Đang kéo template...");
+                    });
+                    tpl.addEventListener("click", () => {
+                        lastTemplate = tpl.getAttribute("data-insert") || "";
+                        setStatus("Đã chọn template. Bạn có thể bấm Copy template hoặc kéo thả.");
+                    });
+                });
+            }
+
+            function openTemplateModal(tpl) {
+                editingTemplateEl = tpl;
+                const label = (tpl.textContent || "").trim();
+                const content = tpl.getAttribute("data-insert") || "";
+                tplModalSub.textContent = label ? ("Template: " + label) : "";
+                tplModalContent.value = content;
+                tplModal.style.display = "flex";
+                tplModal.setAttribute("aria-hidden", "false");
+                setTimeout(() => tplModalContent.focus(), 0);
+            }
+
+            function closeTemplateModal() {
+                editingTemplateEl = null;
+                tplModal.style.display = "none";
+                tplModal.setAttribute("aria-hidden", "true");
+            }
+
+            function saveTemplateModal() {
+                if (!editingTemplateEl) return;
+                const nextInsert = tplModalContent.value || "";
+                editingTemplateEl.setAttribute("data-insert", nextInsert);
+                const id = editingTemplateEl.getAttribute("data-tpl-id");
+                if (id) {
+                    const overrides = loadTemplateOverrides();
+                    const label = (editingTemplateEl.textContent || "").trim();
+                    overrides[id] = { label, insert: nextInsert };
+                    localStorage.setItem(TEMPLATE_OVERRIDES_KEY, JSON.stringify(overrides));
+                }
+                lastTemplate = nextInsert;
+                setStatus("Đã cập nhật template.");
+                closeTemplateModal();
+            }
+
+            function loadTemplateOverrides() {
+                try {
+                    const raw = localStorage.getItem(TEMPLATE_OVERRIDES_KEY);
+                    if (!raw) return {};
+                    const parsed = JSON.parse(raw);
+                    if (!parsed || typeof parsed !== "object") return {};
+                    return parsed;
+                } catch (e) {
+                    return {};
+                }
+            }
+
+            function applyTemplateOverrides() {
+                const overrides = loadTemplateOverrides();
+                const templates = editorPanel.querySelectorAll(".tpl[data-tpl-id]");
+                templates.forEach((tpl) => {
+                    const id = tpl.getAttribute("data-tpl-id");
+                    if (!id) return;
+                    const o = overrides[id];
+                    if (!o) return;
+                    if (o.label) tpl.textContent = o.label;
+                    if (o.insert) tpl.setAttribute("data-insert", o.insert);
+                });
+            }
+
+            async function copyTemplate() {
+                if (!lastTemplate) {
+                    setStatus("Chưa chọn template nào.");
+                    return;
+                }
+                try {
+                    await navigator.clipboard.writeText(lastTemplate);
+                    setStatus("Đã copy template vào clipboard.");
+                } catch (e) {
+                    setStatus("Không copy được (trình duyệt chặn). Bạn có thể kéo thả trực tiếp.");
+                }
+            }
+
+            function bindEditLinks(root) {
+                root.addEventListener("click", (e) => {
+                    if (!editing) return;
+                    const target = e.target;
+                    if (!(target instanceof HTMLAnchorElement)) return;
+                    if (!target.classList.contains("link")) return;
+                    e.preventDefault();
+                    const current = target.getAttribute("href") || "";
+                    const next = window.prompt("Nhập URL cho link:", current);
+                    if (next === null) return;
+                    target.setAttribute("href", next.trim() || "#");
+                    autosaveSoon();
+                    setStatus("Đã cập nhật URL.");
+                });
+            }
+
+            editBtn.addEventListener("click", () => setEditable(!editing));
+            copyBtn.addEventListener("click", copyTemplate);
+            clearStatusBtn.addEventListener("click", () => setStatus(""));
+            panelToggle.addEventListener("click", () => setPanelCollapsed(!editorPanel.classList.contains("collapsed")));
+            addInlineCard.addEventListener("click", () => {
+                if (!editing) return;
+                addProject();
+            });
+            addInlineCard.addEventListener("dragover", (e) => {
+                if (!editing) return;
+                e.preventDefault();
+            });
+            addInlineCard.addEventListener("drop", (e) => {
+                if (!editing) return;
+                e.preventDefault();
+                const payload = e.dataTransfer ? (e.dataTransfer.getData("text/plain") || "") : "";
+                if (!payload) return;
+                const grid = projectsContent.querySelector(".grid");
+                if (!grid) return;
+                const html = payload.includes("<") ? payload : ("<article class='card editable' data-editable='true'><h2 class='card-title'>" + payload.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;") + "</h2><p class='card-desc'>Write description here...</p><div class='meta'><span class='tag'>Tech 1</span></div><div class='links'><a class='link' href='#' target='_blank' rel='noreferrer'>Source Code</a></div></article>");
+                grid.insertAdjacentHTML("beforeend", html);
+                applyEditingState(projectsContent);
+                autosaveSoon();
+                setStatus("Đã thêm nội dung.");
+            });
+
+            tplModalClose.addEventListener("click", closeTemplateModal);
+            tplModalCancel.addEventListener("click", closeTemplateModal);
+            tplModalSave.addEventListener("click", saveTemplateModal);
+            tplModal.addEventListener("click", (e) => {
+                if (e.target === tplModal) closeTemplateModal();
+            });
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "Escape" && tplModal.style.display === "flex") {
+                    closeTemplateModal();
+                }
+            });
+
+            projectsContent.addEventListener("click", (e) => {
+                if (!editing) return;
+                const t = e.target;
+                if (!(t instanceof Element)) return;
+                const removeBtn = t.closest(".block-remove");
+                if (removeBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const card = removeBtn.closest("article.card");
+                    if (card && projectsContent.contains(card)) {
+                        card.remove();
+                        autosaveSoon();
+                        setStatus("Đã xóa dự án.");
+                    }
+                    return;
+                }
+                const add = t.closest(".tag-add");
+                if (add) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const text = window.prompt("Nhập skill:", "");
+                    if (text === null) return;
+                    const html = normalizeTagHtml(text);
+                    const container = add.closest(".meta");
+                    if (container) {
+                        container.insertAdjacentHTML("beforeend", html);
+                        applyEditingState(projectsContent);
+                        autosaveSoon();
+                        setStatus("Đã thêm skill.");
+                    }
+                    return;
+                }
+                const btn = t.closest(".tag-remove");
+                if (!btn) return;
+                e.preventDefault();
+                e.stopPropagation();
+                const tag = btn.closest(".tag");
+                if (tag) {
+                    tag.remove();
+                    autosaveSoon();
+                }
+            });
+
+            projectsContent.addEventListener("input", () => {
+                if (!editing) return;
+                if (cleanupTimer) clearTimeout(cleanupTimer);
+                cleanupTimer = setTimeout(() => cleanupEmptyTags(projectsContent), 300);
+                autosaveSoon();
+            });
+
+            loadSaved();
+            setPanelCollapsed(localStorage.getItem("projects.panel.collapsed") === "1");
+            applyTemplateOverrides();
+            enhanceRemovableBlocks(projectsContent);
+            setEditable(false);
+            bindEditableDnD(projectsContent);
+            bindTemplateDnD();
+            bindEditLinks(projectsContent);
+        })();
+    </script>
+</body>
+</html>
