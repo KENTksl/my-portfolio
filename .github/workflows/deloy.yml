@@ -29,4 +29,4 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/demojava:latest
-            ${{ secrets.DOCKER_USERNAME }}/demojava:${{ github.sha }}
+            ${{ secrets.DOCKER_USERNAME }}/demojava:${{ github.run_number }}
