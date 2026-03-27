@@ -7,7 +7,6 @@ RUN mvn package -DskipTests
 # Giai đoạn Chạy (Runtime)
 FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
-
 # Copy file jar từ giai đoạn builder
 COPY --from=builder /app/target/*.jar app.jar
 

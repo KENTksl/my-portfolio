@@ -18,7 +18,7 @@ services:
       retries: 20
 
   app:
-    image: nhqminh/demojava:v3
+    image: nhqminh/demojava
     build:
       context: .
       dockerfile: Dockerfile
