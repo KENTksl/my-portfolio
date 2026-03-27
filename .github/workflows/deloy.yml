@@ -28,8 +28,7 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/demojava:latest
-            ${{ secrets.DOCKER_USERNAME }}/demojava:${{ github.run_number }}
+            ${{ secrets.DOCKER_USERNAME }}/demojava
       # 4. CD
       - name: Triển khai lên DevOps Classroom
         run: |
