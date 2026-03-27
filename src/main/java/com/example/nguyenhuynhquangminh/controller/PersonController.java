@@ -45,7 +45,7 @@ public class PersonController {
                     1L,
                     "Nguyễn Huỳnh Quang Minh",
                     "quangminh211204@gmail.com",
-                    "",
+                    "2280601945",
                     "TP. Hồ Chí Minh, Việt Nam",
                     "Chế độ không dùng database đang bật.",
                     "https://via.placeholder.com/600"

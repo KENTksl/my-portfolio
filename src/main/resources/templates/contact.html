@@ -224,8 +224,8 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="label">Phone</div>
-                        <div class="value" th:text="${profile != null && profile.phone != null ? profile.phone : '0900 000 000'}">0900 000 000</div>
+                        <div class="label">MSSV</div>
+                        <div class="value" th:text="${profile != null && profile.phone != null && !profile.phone.isEmpty() ? profile.phone : '2280601945'}">2280601945</div>
                     </div>
                     <div class="row">
                         <div class="label">Location</div>
@@ -269,7 +269,7 @@
         <footer class="footer">
             <div class="footer-inner">
                 <span th:text="${profile != null ? profile.email : 'your.email@example.com'}">your.email@example.com</span>
-                <span th:text="${profile != null ? profile.phone : '0900 000 000'}">0900 000 000</span>
+                <span th:text="${profile != null && profile.phone != null && !profile.phone.isEmpty() ? profile.phone : '2280601945'}">2280601945</span>
             </div>
         </footer>
     </div>

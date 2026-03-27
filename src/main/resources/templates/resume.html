@@ -612,7 +612,7 @@
         <footer class="footer">
             <div class="footer-grid">
                 <p class="footer-text" th:text="${profile != null && profile.email != null ? profile.email : 'your.email@example.com'}">your.email@example.com</p>
-                <p class="footer-text" style="text-align: right;" th:text="${profile != null && profile.phone != null ? profile.phone : '0900 000 000'}">0900 000 000</p>
+                <p class="footer-text" style="text-align: right;" th:text="${profile != null && profile.phone != null && !profile.phone.isEmpty() ? profile.phone : '2280601945'}">2280601945</p>
             </div>
         </footer>
     </div>

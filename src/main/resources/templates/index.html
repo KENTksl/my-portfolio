@@ -256,8 +256,8 @@
         <footer class="footer">
             <div class="footer-grid">
                 <div>
-                    <p class="footer-item-title">Phone</p>
-                    <p class="footer-item-value" th:text="${profile != null ? profile.phone : ''}">123-456-7890</p>
+                    <p class="footer-item-title">MSSV</p>
+                    <p class="footer-item-value" th:text="${profile != null && profile.phone != null && !profile.phone.isEmpty() ? profile.phone : '2280601945'}">2280601945</p>
                 </div>
                 <div>
                     <p class="footer-item-title">Email</p>

@@ -584,7 +584,7 @@
         <footer class="footer">
             <div class="footer-inner">
                 <span th:text="${profile != null ? profile.email : 'your.email@example.com'}">your.email@example.com</span>
-                <span th:text="${profile != null ? profile.phone : '0900 000 000'}">0900 000 000</span>
+                <span th:text="${profile != null && profile.phone != null && !profile.phone.isEmpty() ? profile.phone : '2280601945'}">2280601945</span>
             </div>
         </footer>
     </div>
