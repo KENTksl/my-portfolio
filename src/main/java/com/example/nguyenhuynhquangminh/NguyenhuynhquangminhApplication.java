@@ -5,6 +5,7 @@ import com.example.nguyenhuynhquangminh.repository.PersonRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class NguyenhuynhquangminhApplication {
 	}
 
 	@Bean
+	@ConditionalOnProperty(name = "app.db.enabled", havingValue = "true", matchIfMissing = true)
 	CommandLineRunner initDatabase(PersonRepository repository) {
 		return args -> {
 			if (repository.count() == 0) {

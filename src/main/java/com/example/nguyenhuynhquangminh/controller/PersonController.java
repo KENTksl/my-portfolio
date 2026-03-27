@@ -26,7 +26,7 @@ import java.util.UUID;
 public class PersonController {
 
     @Autowired
-    private PersonRepository personRepository;
+    private ObjectProvider<PersonRepository> personRepositoryProvider;
 
     @Autowired
     private ObjectProvider<ContactMailService> contactMailServiceProvider;
@@ -34,8 +34,24 @@ public class PersonController {
     @Value("${upload.path}")
     private String uploadPath;
 
+    private PersonRepository getRepository() {
+        return personRepositoryProvider.getIfAvailable();
+    }
+
     private Person getProfile() {
-        List<Person> persons = personRepository.findAll();
+        PersonRepository repository = getRepository();
+        if (repository == null) {
+            return new Person(
+                    1L,
+                    "Nguyễn Huỳnh Quang Minh",
+                    "quangminh211204@gmail.com",
+                    "",
+                    "TP. Hồ Chí Minh, Việt Nam",
+                    "Chế độ không dùng database đang bật.",
+                    "https://via.placeholder.com/600"
+            );
+        }
+        List<Person> persons = repository.findAll();
         return persons.stream()
                 .min(Comparator.comparing(Person::getId, Comparator.nullsLast(Long::compareTo)))
                 .orElse(null);
@@ -117,7 +133,11 @@ public class PersonController {
 
     @GetMapping("/person/{id}")
     public String showDetail(@PathVariable Long id, Model model) {
-        Optional<Person> person = personRepository.findById(id);
+        PersonRepository repository = getRepository();
+        if (repository == null) {
+            return "redirect:/";
+        }
+        Optional<Person> person = repository.findById(id);
         if (person.isPresent()) {
             model.addAttribute("person", person.get());
             return "detail";
@@ -128,8 +148,12 @@ public class PersonController {
     @PostMapping("/person/update")
     public String updatePerson(@ModelAttribute Person person, 
                                @RequestParam("imageFile") MultipartFile imageFile) throws IOException {
-        
-        Optional<Person> existingPerson = personRepository.findById(person.getId());
+        PersonRepository repository = getRepository();
+        if (repository == null) {
+            return "redirect:/";
+        }
+
+        Optional<Person> existingPerson = repository.findById(person.getId());
         
         if (existingPerson.isPresent()) {
             Person p = existingPerson.get();
@@ -152,7 +176,7 @@ public class PersonController {
                 p.setImageUrl(person.getImageUrl());
             }
 
-            personRepository.save(p);
+            repository.save(p);
         }
         
         return "redirect:/person/" + person.getId();
