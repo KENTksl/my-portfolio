@@ -35,8 +35,9 @@ export function CvTabs({ tabs, initialTabId }: CvTabsProps) {
           const panelId = `${baseId}-${t.id}-panel`;
           const cls = [
             "pixel-button",
-            "inline-flex items-center justify-center px-4 py-3 text-[16px] font-bold tracking-wide",
-            selected ? "bg-green-500 text-gray-900" : "bg-[var(--panel)] text-gray-100",
+            "inline-flex items-center justify-center px-4 py-3 text-[16px] font-bold leading-none tracking-wide",
+            "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--glow-yellow)] focus-visible:ring-offset-4 focus-visible:ring-offset-transparent",
+            selected ? "pixel-button-primary" : "",
           ].join(" ");
 
           return (
@@ -51,7 +52,7 @@ export function CvTabs({ tabs, initialTabId }: CvTabsProps) {
               className={cls}
               onClick={() => setActiveId(t.id)}
             >
-              {t.label}
+              <span className="pixel-title text-[10px] tracking-wide">{t.label}</span>
             </button>
           );
         })}

@@ -19,7 +19,7 @@ export function Avatar({ fullName, src }: AvatarProps) {
   if (!src) {
     return (
       <div className="pixel-avatar flex h-[112px] w-[112px] items-center justify-center overflow-hidden rounded-full bg-white/10 ring-4 ring-gray-900/95 shadow-[6px_6px_0_rgba(17,24,39,0.95)]">
-        <span className="pixel-title text-[18px] text-gray-100">{getInitials(fullName)}</span>
+        <span className="pixel-title text-[18px]">{getInitials(fullName)}</span>
       </div>
     );
   }

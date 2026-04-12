@@ -16,14 +16,13 @@ function isSpecialHref(href: string) {
 
 export function PixelButton({ href, children, variant = "default" }: PixelButtonProps) {
   const base =
-    "pixel-button inline-flex items-center justify-center bg-[var(--panel)] px-4 py-3 text-[16px] font-bold leading-none tracking-wide";
-  const primary = "bg-green-500 text-gray-900";
-  const cls = `${base} ${variant === "primary" ? primary : "text-gray-100"}`;
+    "pixel-button inline-flex items-center justify-center px-4 py-3 text-[16px] font-bold leading-none tracking-wide focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--glow-yellow)] focus-visible:ring-offset-4 focus-visible:ring-offset-transparent";
+  const cls = `${base} ${variant === "primary" ? "pixel-button-primary" : ""}`;
 
   if (isExternalHref(href)) {
     return (
       <a className={cls} href={href} target="_blank" rel="noreferrer">
-        {children}
+        <span className="pixel-title text-[10px] tracking-wide">{children}</span>
       </a>
     );
   }
@@ -31,14 +30,14 @@ export function PixelButton({ href, children, variant = "default" }: PixelButton
   if (isSpecialHref(href)) {
     return (
       <a className={cls} href={href}>
-        {children}
+        <span className="pixel-title text-[10px] tracking-wide">{children}</span>
       </a>
     );
   }
 
   return (
     <Link className={cls} href={href}>
-      {children}
+      <span className="pixel-title text-[10px] tracking-wide">{children}</span>
     </Link>
   );
 }

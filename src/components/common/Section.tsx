@@ -12,4 +12,3 @@ export function Section({ title, className, children }: SectionProps) {
     </section>
   );
 }
-

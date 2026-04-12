@@ -21,9 +21,11 @@
     "typescript": "^5.9.0"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
+    "dev:clean": "npm run clean && next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "clean": "node -e \"const fs=require('fs');const sleep=(ms)=>Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,ms);for(const p of ['.next','.turbo']){for(let i=0;i<6;i++){try{fs.rmSync(p,{recursive:true,force:true});break;}catch(e){if(i===5)throw e;sleep(200);}}}\"",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
   },
