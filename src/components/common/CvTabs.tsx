@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useMemo, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 export type CvTab = {
   id: string;
@@ -18,6 +18,11 @@ export function CvTabs({ tabs, initialTabId }: CvTabsProps) {
   const firstTabId = tabs[0]?.id;
   const safeInitialId = initialTabId ?? firstTabId;
   const [activeId, setActiveId] = useState<string | undefined>(safeInitialId);
+  const tabListRef = useRef<HTMLDivElement | null>(null);
+  const tabButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const [markerLeft, setMarkerLeft] = useState<number>(-9999);
+  const [isJumping, setIsJumping] = useState(false);
+  const lastJumpedTabIdRef = useRef<string | undefined>(undefined);
 
   const activeIndex = useMemo(() => {
     const idx = tabs.findIndex((t) => t.id === activeId);
@@ -26,9 +31,57 @@ export function CvTabs({ tabs, initialTabId }: CvTabsProps) {
 
   const active = tabs[activeIndex];
 
+  useLayoutEffect(() => {
+    if (!active?.id) return;
+    const container = tabListRef.current;
+    const activeButton = tabButtonRefs.current[active.id];
+    if (!container || !activeButton) return;
+
+    const update = () => {
+      const containerRect = container.getBoundingClientRect();
+      const buttonRect = activeButton.getBoundingClientRect();
+      const centerX = buttonRect.left - containerRect.left + buttonRect.width / 2;
+      setMarkerLeft(centerX);
+    };
+
+    update();
+    const onResize = () => update();
+    window.addEventListener("resize", onResize);
+    const ro =
+      typeof ResizeObserver !== "undefined" ? new ResizeObserver(update) : null;
+    ro?.observe(container);
+    ro?.observe(activeButton);
+
+    return () => {
+      window.removeEventListener("resize", onResize);
+      ro?.disconnect();
+    };
+  }, [active?.id, tabs.length]);
+
+  useEffect(() => {
+    if (!active?.id) return;
+    if (markerLeft < 0) return;
+    if (lastJumpedTabIdRef.current === active.id) return;
+    lastJumpedTabIdRef.current = active.id;
+
+    setIsJumping(true);
+    const t = window.setTimeout(() => setIsJumping(false), 520);
+    return () => window.clearTimeout(t);
+  }, [active?.id, markerLeft]);
+
   return (
     <section className="panel p-6">
-      <div className="flex flex-wrap gap-3" role="tablist" aria-label="CV sections">
+      <div
+        ref={tabListRef}
+        className="relative flex flex-wrap gap-3"
+        role="tablist"
+        aria-label="CV sections"
+      >
+        <span
+          aria-hidden
+          className={["tab-marker", isJumping ? "is-jumping" : ""].join(" ")}
+          style={{ left: `${markerLeft}px` }}
+        />
         {tabs.map((t) => {
           const selected = t.id === active?.id;
           const tabId = `${baseId}-${t.id}-tab`;
@@ -51,6 +104,9 @@ export function CvTabs({ tabs, initialTabId }: CvTabsProps) {
               tabIndex={selected ? 0 : -1}
               className={cls}
               onClick={() => setActiveId(t.id)}
+              ref={(el) => {
+                tabButtonRefs.current[t.id] = el;
+              }}
             >
               <span className="pixel-title text-[10px] tracking-wide">{t.label}</span>
             </button>

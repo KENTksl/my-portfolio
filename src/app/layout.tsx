@@ -17,6 +17,11 @@ const vt323 = VT323({
 export const metadata: Metadata = {
   title: "CV | Nguyen Huynh Quang Minh",
   description: "Curriculum Vitae",
+  icons: {
+    icon: "/logo.svg",
+    shortcut: "/logo.svg",
+    apple: "/logo192.png",
+  },
 };
 
 export default function RootLayout({
@@ -30,4 +35,3 @@ export default function RootLayout({
     </html>
   );
 }
-
