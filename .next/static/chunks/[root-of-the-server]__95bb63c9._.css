@@ -114,6 +114,7 @@
 @layer properties {
   @supports (((-webkit-hyphens: none)) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color: rgb(from red r g b)))) {
     *, :before, :after, ::backdrop {
+      --tw-border-style: solid;
       --tw-leading: initial;
       --tw-font-weight: initial;
       --tw-tracking: initial;
@@ -396,6 +397,22 @@
 @layer components;
 
 @layer utilities {
+  .sr-only {
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border-width: 0;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    position: absolute;
+    overflow: hidden;
+  }
+
+  .fixed {
+    position: fixed;
+  }
+
   .relative {
     position: relative;
   }
@@ -460,6 +477,10 @@
 
   .mb-3 {
     margin-bottom: calc(var(--spacing) * 3);
+  }
+
+  .block {
+    display: block;
   }
 
   .flex {
@@ -560,6 +581,11 @@
 
   .rounded-full {
     border-radius: 3.40282e38px;
+  }
+
+  .border {
+    border-style: var(--tw-border-style);
+    border-width: 1px;
   }
 
   .bg-white\/10 {
@@ -818,7 +844,7 @@ body {
 }
 
 .world {
-  background: radial-gradient(var(--celestial-size) var(--celestial-size) at var(--celestial-x) var(--celestial-y), var(--celestial-color) 0 52%, #fde04700 56%), radial-gradient(900px 600px at 20% 28%, #22d3ee42, transparent 60%), radial-gradient(900px 600px at 82% 30%, #f472b638, transparent 60%), radial-gradient(1200px 900px at 50% 105%, #4ade8029, transparent 60%), linear-gradient(var(--sky-0) 0%, var(--sky-1) 28%, var(--sky-2) 48%, var(--sky-3) 68%, var(--sunset-0) 86%, var(--sunset-1) 100%);
+  background: radial-gradient(var(--celestial-size) var(--celestial-size) at var(--celestial-x) var(--celestial-y), var(--celestial-color) 0 52%, #fde04700 56%), radial-gradient(900px 600px at 20% 28%, #22d3ee42, transparent 60%), radial-gradient(900px 600px at 82% 30%, #f472b638, transparent 60%), radial-gradient(1200px 900px at 50% 105%, #4ade8029, transparent 60%), radial-gradient(1100px 240px at 50% 78%, #ffffff2e, #fff0 70%), linear-gradient(var(--sky-0) 0%, var(--sky-1) 28%, var(--sky-2) 48%, var(--sky-3) 68%, var(--sunset-0) 86%, var(--sunset-1) 100%);
   min-height: 100vh;
   position: relative;
   overflow: hidden;
@@ -1013,9 +1039,9 @@ body {
   z-index: 10;
   width: 32px;
   height: 32px;
-  transition: left .32s cubic-bezier(.22, 1, .36, 1);
+  transition: left .32s cubic-bezier(.22, 1, .36, 1), top .2s;
   position: absolute;
-  top: -34px;
+  top: 0;
   transform: translateX(-50%);
 }
 
@@ -1031,9 +1057,181 @@ body {
   inset: 0;
 }
 
+.copy-wrap {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  display: inline-flex;
+  position: relative;
+}
+
+.copy-button {
+  box-shadow: 0 0 0 3px var(--ink), 4px 4px 0 var(--ink);
+  border-width: 3px;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 8px;
+  display: inline-flex;
+}
+
+.copy-icon {
+  display: block;
+}
+
+.copy-toast {
+  color: #0f172af5;
+  opacity: 0;
+  pointer-events: none;
+  background: #ffffffeb;
+  border: 3px solid #111827e6;
+  padding: 6px 10px;
+  font-size: 16px;
+  line-height: 1;
+  transition: opacity .14s, transform .14s;
+  position: absolute;
+  top: -34px;
+  right: 0;
+  transform: translateY(6px);
+  box-shadow: 0 0 0 3px #111827eb, 4px 4px #111827eb;
+}
+
+.copy-toast.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes oneUpPop {
+  0% {
+    opacity: 0;
+    transform: translate3d(-50%, 0, 0)scale(.92);
+  }
+
+  14% {
+    opacity: 1;
+    transform: translate3d(-50%, -10px, 0)scale(1);
+  }
+
+  80% {
+    opacity: 1;
+    transform: translate3d(-50%, -28px, 0)scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(-50%, -44px, 0)scale(1);
+  }
+}
+
+.easter-1up {
+  z-index: 60;
+  pointer-events: none;
+  color: #0f172af5;
+  background: #ffffffeb;
+  border: 3px solid #111827e6;
+  padding: 10px 14px;
+  animation: 1.1s both oneUpPop;
+  position: fixed;
+  top: 14vh;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 0 3px #111827eb, 6px 6px #111827eb;
+}
+
+.egg-toggle {
+  z-index: 60;
+  box-shadow: 0 0 0 3px var(--ink), 4px 4px 0 var(--ink);
+  border-width: 3px;
+  padding: 8px 10px;
+  position: fixed;
+  bottom: 14px;
+  right: 14px;
+}
+
+.theme-toggle {
+  z-index: 60;
+  gap: 8px;
+  display: grid;
+  position: fixed;
+  bottom: 68px;
+  right: 14px;
+}
+
+.theme-toggle-main {
+  box-shadow: 0 0 0 3px var(--ink), 4px 4px 0 var(--ink);
+  opacity: .92;
+  border-width: 3px;
+  padding: 8px 10px;
+}
+
+.theme-toggle-menu {
+  gap: 8px;
+  display: grid;
+}
+
+.theme-toggle-option {
+  box-shadow: 0 0 0 3px var(--ink), 4px 4px 0 var(--ink);
+  opacity: .92;
+  border-width: 3px;
+  padding: 8px 10px;
+}
+
+.theme-toggle-option.is-active {
+  opacity: 1;
+  outline-offset: 2px;
+  outline: 4px solid #fde047a6;
+}
+
+@keyframes tabPanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tab-panel-anim {
+  will-change: opacity, transform;
+  animation: .2s both tabPanelIn;
+}
+
+@keyframes tabsFlash {
+  from {
+    outline-offset: 0px;
+    outline-color: #fde047e6;
+  }
+
+  to {
+    outline-offset: 10px;
+    outline-color: #fde04700;
+  }
+}
+
+.tabs-flash {
+  outline-offset: 0px;
+  outline: 4px solid #fde04700;
+  animation: .26s both tabsFlash;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .tab-marker {
+  .tab-marker, .tab-panel {
     transition: none;
+  }
+
+  .tab-panel-anim, .tabs-flash {
+    animation: none;
+  }
+
+  .theme-toggle-main, .theme-toggle-option, .copy-toast {
+    transition: none;
+  }
+
+  .world-stars:after, .easter-1up {
+    opacity: 0;
+    animation: none;
   }
 }
 
@@ -1053,17 +1251,58 @@ body {
   inset: 0;
 }
 
+@keyframes meteorShoot {
+  0%, 78% {
+    opacity: 0;
+    transform: translate3d(-40vw, -10vh, 0)rotate(-22deg);
+  }
+
+  82% {
+    opacity: .9;
+    transform: translate3d(10vw, 8vh, 0)rotate(-22deg);
+  }
+
+  88% {
+    opacity: 0;
+    transform: translate3d(70vw, 26vh, 0)rotate(-22deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(70vw, 26vh, 0)rotate(-22deg);
+  }
+}
+
+.world-stars:after {
+  content: "";
+  opacity: 0;
+  filter: drop-shadow(0 0 6px #ffffff73);
+  background: linear-gradient(90deg, #fff0 0%, #fffffff2 45%, #fff0 100%);
+  width: 220px;
+  height: 2px;
+  animation: 18s linear infinite meteorShoot;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 .world:before {
   opacity: .6;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='64' viewBox='0 0 256 64'%3E%3Crect width='256' height='64' fill='none'/%3E%3Cg%3E%3Cg fill='%23ffffff'%3E%3Crect x='18' y='22' width='10' height='10'/%3E%3Crect x='28' y='18' width='10' height='10'/%3E%3Crect x='38' y='14' width='10' height='10'/%3E%3Crect x='48' y='18' width='10' height='10'/%3E%3Crect x='58' y='22' width='10' height='10'/%3E%3Crect x='28' y='30' width='10' height='10'/%3E%3Crect x='38' y='30' width='10' height='10'/%3E%3Crect x='48' y='30' width='10' height='10'/%3E%3Crect x='58' y='30' width='10' height='10'/%3E%3Crect x='68' y='30' width='10' height='10'/%3E%3C/g%3E%3Cg fill='%23e0f2fe'%3E%3Crect x='32' y='40' width='10' height='10'/%3E%3Crect x='42' y='40' width='10' height='10'/%3E%3Crect x='52' y='40' width='10' height='10'/%3E%3Crect x='62' y='40' width='10' height='10'/%3E%3C/g%3E%3Cg fill='%23bae6fd'%3E%3Crect x='42' y='50' width='10' height='10'/%3E%3Crect x='52' y='50' width='10' height='10'/%3E%3Crect x='62' y='50' width='10' height='10'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(128 6)'%3E%3Cg fill='%23ffffff'%3E%3Crect x='18' y='22' width='10' height='10'/%3E%3Crect x='28' y='18' width='10' height='10'/%3E%3Crect x='38' y='14' width='10' height='10'/%3E%3Crect x='48' y='18' width='10' height='10'/%3E%3Crect x='58' y='22' width='10' height='10'/%3E%3Crect x='28' y='30' width='10' height='10'/%3E%3Crect x='38' y='30' width='10' height='10'/%3E%3Crect x='48' y='30' width='10' height='10'/%3E%3Crect x='58' y='30' width='10' height='10'/%3E%3Crect x='68' y='30' width='10' height='10'/%3E%3C/g%3E%3Cg fill='%23e0f2fe'%3E%3Crect x='32' y='40' width='10' height='10'/%3E%3Crect x='42' y='40' width='10' height='10'/%3E%3Crect x='52' y='40' width='10' height='10'/%3E%3Crect x='62' y='40' width='10' height='10'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  background-position: 0 12%;
-  background-repeat: repeat-x;
-  background-size: 256px 64px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='64' viewBox='0 0 240 64'%3E%3Crect width='240' height='64' fill='none'/%3E%3Cg opacity='0.35'%3E%3Cg fill='%23ffffff'%3E%3Crect x='18' y='16' width='8' height='8'/%3E%3Crect x='26' y='12' width='8' height='8'/%3E%3Crect x='34' y='8' width='8' height='8'/%3E%3Crect x='42' y='12' width='8' height='8'/%3E%3Crect x='50' y='16' width='8' height='8'/%3E%3Crect x='26' y='24' width='8' height='8'/%3E%3Crect x='34' y='24' width='8' height='8'/%3E%3Crect x='42' y='24' width='8' height='8'/%3E%3Crect x='50' y='24' width='8' height='8'/%3E%3Crect x='58' y='24' width='8' height='8'/%3E%3C/g%3E%3Cg fill='%23e0f2fe'%3E%3Crect x='30' y='32' width='8' height='8'/%3E%3Crect x='38' y='32' width='8' height='8'/%3E%3Crect x='46' y='32' width='8' height='8'/%3E%3Crect x='54' y='32' width='8' height='8'/%3E%3C/g%3E%3Cg fill='%23ffffff'%3E%3Crect x='138' y='20' width='8' height='8'/%3E%3Crect x='146' y='16' width='8' height='8'/%3E%3Crect x='154' y='12' width='8' height='8'/%3E%3Crect x='162' y='16' width='8' height='8'/%3E%3Crect x='170' y='20' width='8' height='8'/%3E%3Crect x='146' y='28' width='8' height='8'/%3E%3Crect x='154' y='28' width='8' height='8'/%3E%3Crect x='162' y='28' width='8' height='8'/%3E%3Crect x='170' y='28' width='8' height='8'/%3E%3Crect x='178' y='28' width='8' height='8'/%3E%3C/g%3E%3Cg fill='%23e0f2fe'%3E%3Crect x='150' y='36' width='8' height='8'/%3E%3Crect x='158' y='36' width='8' height='8'/%3E%3Crect x='166' y='36' width='8' height='8'/%3E%3Crect x='174' y='36' width='8' height='8'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='64' viewBox='0 0 256 64'%3E%3Crect width='256' height='64' fill='none'/%3E%3Cg%3E%3Cg fill='%23ffffff'%3E%3Crect x='18' y='22' width='10' height='10'/%3E%3Crect x='28' y='18' width='10' height='10'/%3E%3Crect x='38' y='14' width='10' height='10'/%3E%3Crect x='48' y='18' width='10' height='10'/%3E%3Crect x='58' y='22' width='10' height='10'/%3E%3Crect x='28' y='30' width='10' height='10'/%3E%3Crect x='38' y='30' width='10' height='10'/%3E%3Crect x='48' y='30' width='10' height='10'/%3E%3Crect x='58' y='30' width='10' height='10'/%3E%3Crect x='68' y='30' width='10' height='10'/%3E%3C/g%3E%3Cg fill='%23e0f2fe'%3E%3Crect x='32' y='40' width='10' height='10'/%3E%3Crect x='42' y='40' width='10' height='10'/%3E%3Crect x='52' y='40' width='10' height='10'/%3E%3Crect x='62' y='40' width='10' height='10'/%3E%3C/g%3E%3Cg fill='%23bae6fd'%3E%3Crect x='42' y='50' width='10' height='10'/%3E%3Crect x='52' y='50' width='10' height='10'/%3E%3Crect x='62' y='50' width='10' height='10'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(128 6)'%3E%3Cg fill='%23ffffff'%3E%3Crect x='18' y='22' width='10' height='10'/%3E%3Crect x='28' y='18' width='10' height='10'/%3E%3Crect x='38' y='14' width='10' height='10'/%3E%3Crect x='48' y='18' width='10' height='10'/%3E%3Crect x='58' y='22' width='10' height='10'/%3E%3Crect x='28' y='30' width='10' height='10'/%3E%3Crect x='38' y='30' width='10' height='10'/%3E%3Crect x='48' y='30' width='10' height='10'/%3E%3Crect x='58' y='30' width='10' height='10'/%3E%3Crect x='68' y='30' width='10' height='10'/%3E%3C/g%3E%3Cg fill='%23e0f2fe'%3E%3Crect x='32' y='40' width='10' height='10'/%3E%3Crect x='42' y='40' width='10' height='10'/%3E%3Crect x='52' y='40' width='10' height='10'/%3E%3Crect x='62' y='40' width='10' height='10'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='80' viewBox='0 0 320 80'%3E%3Crect width='320' height='80' fill='none'/%3E%3Cg fill='%230f172a' opacity='0.35'%3E%3Crect x='22' y='22' width='2' height='2'/%3E%3Crect x='24' y='24' width='2' height='2'/%3E%3Crect x='26' y='22' width='2' height='2'/%3E%3Crect x='74' y='14' width='2' height='2'/%3E%3Crect x='76' y='16' width='2' height='2'/%3E%3Crect x='78' y='14' width='2' height='2'/%3E%3Crect x='142' y='26' width='2' height='2'/%3E%3Crect x='144' y='28' width='2' height='2'/%3E%3Crect x='146' y='26' width='2' height='2'/%3E%3Crect x='198' y='18' width='2' height='2'/%3E%3Crect x='200' y='20' width='2' height='2'/%3E%3Crect x='202' y='18' width='2' height='2'/%3E%3Crect x='262' y='30' width='2' height='2'/%3E%3Crect x='264' y='32' width='2' height='2'/%3E%3Crect x='266' y='30' width='2' height='2'/%3E%3Crect x='298' y='16' width='2' height='2'/%3E%3Crect x='300' y='18' width='2' height='2'/%3E%3Crect x='302' y='16' width='2' height='2'/%3E%3C/g%3E%3C/svg%3E");
+  background-position: 0 8%, 0 12%, 0 24%;
+  background-repeat: repeat-x, repeat-x, repeat-x;
+  background-size: 240px 64px, 256px 64px, 320px 80px;
   animation: none;
 }
 
 :root[data-time-theme="night"] .world:before {
   opacity: .35;
+}
+
+@property --tw-border-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
 }
 
 @property --tw-leading {

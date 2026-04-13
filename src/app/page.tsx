@@ -1,4 +1,5 @@
 import { Avatar } from "@/components/common/Avatar";
+import { CopyableValue } from "@/components/common/CopyableValue";
 import { CvTabs } from "@/components/common/CvTabs";
 import { PixelButton } from "@/components/common/PixelButton";
 import { Section } from "@/components/common/Section";
@@ -57,7 +58,9 @@ export default function Page() {
                       {c.label}
                     </dt>
                     <dd className="min-w-0 text-[20px] text-[color:var(--panel-text)]">
-                      {c.href ? (
+                      {c.href?.startsWith("mailto:") || c.href?.startsWith("tel:") ? (
+                        <CopyableValue text={c.value} href={c.href} />
+                      ) : c.href ? (
                         <a className="break-words text-[color:var(--panel-link)] underline" href={c.href}>
                           {c.value}
                         </a>

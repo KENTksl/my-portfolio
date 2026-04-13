@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Rgb = { r: number; g: number; b: number };
 
@@ -103,16 +103,163 @@ function applyWorldByLocalTime(date: Date) {
   setVar("--decor-opacity", lerp(0.62, 0.25, nightness).toFixed(3));
 }
 
-export function WorldTimeTheme() {
-  useEffect(() => {
-    const apply = () => {
-      applyWorldByLocalTime(new Date());
-    };
+function makePresetDate(hours: number) {
+  const d = new Date();
+  d.setHours(hours, 0, 0, 0);
+  return d;
+}
 
-    apply();
-    const id = window.setInterval(apply, 1_000);
-    return () => window.clearInterval(id);
+type TimeThemeMode = "auto" | "day" | "night";
+
+export function WorldTimeTheme() {
+  const konami = useMemo(
+    () => ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"],
+    [],
+  );
+  const [eggEnabled, setEggEnabled] = useState(true);
+  const [showOneUp, setShowOneUp] = useState(false);
+  const [timeMode, setTimeMode] = useState<TimeThemeMode>("auto");
+  const [themeOpen, setThemeOpen] = useState(false);
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem("timeThemeMode");
+      if (raw === "day" || raw === "night" || raw === "auto") setTimeMode(raw);
+    } catch {}
   }, []);
 
-  return null;
+  useEffect(() => {
+    try {
+      window.localStorage.setItem("timeThemeMode", timeMode);
+    } catch {}
+  }, [timeMode]);
+
+  useEffect(() => {
+    setThemeOpen(false);
+  }, [timeMode]);
+
+  useEffect(() => {
+    if (timeMode === "auto") {
+      const apply = () => {
+        applyWorldByLocalTime(new Date());
+      };
+      apply();
+      const id = window.setInterval(apply, 1_000);
+      return () => window.clearInterval(id);
+    }
+
+    applyWorldByLocalTime(timeMode === "day" ? makePresetDate(12) : makePresetDate(0));
+    return;
+  }, [timeMode]);
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem("easterEggEnabled");
+      if (raw === "0") setEggEnabled(false);
+      if (raw === "1") setEggEnabled(true);
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem("easterEggEnabled", eggEnabled ? "1" : "0");
+    } catch {}
+  }, [eggEnabled]);
+
+  useEffect(() => {
+    const buf: string[] = [];
+    const onKeyDown = (e: KeyboardEvent) => {
+      const key = e.key;
+      buf.push(key);
+      if (buf.length > konami.length) buf.shift();
+
+      const match = buf.every((v, i) => {
+        const target = konami[i];
+        if (!target) return false;
+        if (target === "a" || target === "b") return v.toLowerCase() === target;
+        return v === target;
+      });
+
+      if (!match) return;
+      if (!eggEnabled) return;
+
+      setShowOneUp(true);
+      window.setTimeout(() => setShowOneUp(false), 1100);
+
+      try {
+        const AudioCtx = (window.AudioContext ||
+          (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext) as typeof AudioContext | undefined;
+        const ctx = AudioCtx ? new AudioCtx() : null;
+        if (!ctx) return;
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = "square";
+        o.frequency.value = 988;
+        const now = ctx.currentTime;
+        g.gain.setValueAtTime(0.0001, now);
+        g.gain.exponentialRampToValueAtTime(0.16, now + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+        o.connect(g);
+        g.connect(ctx.destination);
+        o.start(now);
+        o.stop(now + 0.18);
+        o.onended = () => {
+          ctx.close().catch(() => {});
+        };
+      } catch {}
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [eggEnabled, konami]);
+
+  return (
+    <>
+      {showOneUp ? (
+        <div className="easter-1up" aria-hidden>
+          <span className="pixel-title text-[12px] tracking-wide">1UP</span>
+        </div>
+      ) : null}
+      <div className="theme-toggle">
+        <button
+          className="pixel-button theme-toggle-main"
+          type="button"
+          onClick={() => setThemeOpen((v) => !v)}
+        >
+          <span className="pixel-title text-[10px] tracking-wide">Themes</span>
+        </button>
+        {themeOpen ? (
+          <div className="theme-toggle-menu" role="menu" aria-label="Theme mode">
+            <button
+              className={["pixel-button theme-toggle-option", timeMode === "auto" ? "is-active" : ""].join(" ")}
+              type="button"
+              role="menuitem"
+              onClick={() => setTimeMode("auto")}
+            >
+              <span className="pixel-title text-[10px] tracking-wide">Auto</span>
+            </button>
+            <button
+              className={["pixel-button theme-toggle-option", timeMode === "day" ? "is-active" : ""].join(" ")}
+              type="button"
+              role="menuitem"
+              onClick={() => setTimeMode("day")}
+            >
+              <span className="pixel-title text-[10px] tracking-wide">Day</span>
+            </button>
+            <button
+              className={["pixel-button theme-toggle-option", timeMode === "night" ? "is-active" : ""].join(" ")}
+              type="button"
+              role="menuitem"
+              onClick={() => setTimeMode("night")}
+            >
+              <span className="pixel-title text-[10px] tracking-wide">Night</span>
+            </button>
+          </div>
+        ) : null}
+      </div>
+      <button className="pixel-button egg-toggle" type="button" onClick={() => setEggEnabled((v) => !v)}>
+        <span className="pixel-title text-[10px] tracking-wide">{eggEnabled ? "Egg: ON" : "Egg: OFF"}</span>
+      </button>
+    </>
+  );
 }
