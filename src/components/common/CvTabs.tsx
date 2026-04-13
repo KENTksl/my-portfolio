@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 export type CvTab = {
   id: string;
@@ -21,8 +21,6 @@ export function CvTabs({ tabs, initialTabId }: CvTabsProps) {
   const tabListRef = useRef<HTMLDivElement | null>(null);
   const tabButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const [markerLeft, setMarkerLeft] = useState<number>(-9999);
-  const [isJumping, setIsJumping] = useState(false);
-  const lastJumpedTabIdRef = useRef<string | undefined>(undefined);
 
   const activeIndex = useMemo(() => {
     const idx = tabs.findIndex((t) => t.id === activeId);
@@ -58,17 +56,6 @@ export function CvTabs({ tabs, initialTabId }: CvTabsProps) {
     };
   }, [active?.id, tabs.length]);
 
-  useEffect(() => {
-    if (!active?.id) return;
-    if (markerLeft < 0) return;
-    if (lastJumpedTabIdRef.current === active.id) return;
-    lastJumpedTabIdRef.current = active.id;
-
-    setIsJumping(true);
-    const t = window.setTimeout(() => setIsJumping(false), 520);
-    return () => window.clearTimeout(t);
-  }, [active?.id, markerLeft]);
-
   return (
     <section className="panel p-6">
       <div
@@ -79,7 +66,7 @@ export function CvTabs({ tabs, initialTabId }: CvTabsProps) {
       >
         <span
           aria-hidden
-          className={["tab-marker", isJumping ? "is-jumping" : ""].join(" ")}
+          className="tab-marker"
           style={{ left: `${markerLeft}px` }}
         />
         {tabs.map((t) => {

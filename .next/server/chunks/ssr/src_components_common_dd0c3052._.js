@@ -19,8 +19,6 @@ function CvTabs({ tabs, initialTabId }) {
     const tabListRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
     const tabButtonRefs = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])({});
     const [markerLeft, setMarkerLeft] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(-9999);
-    const [isJumping, setIsJumping] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
-    const lastJumpedTabIdRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(undefined);
     const activeIndex = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useMemo"])(()=>{
         const idx = tabs.findIndex((t)=>t.id === activeId);
         return idx >= 0 ? idx : 0;
@@ -54,18 +52,6 @@ function CvTabs({ tabs, initialTabId }) {
         active?.id,
         tabs.length
     ]);
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        if (!active?.id) return;
-        if (markerLeft < 0) return;
-        if (lastJumpedTabIdRef.current === active.id) return;
-        lastJumpedTabIdRef.current = active.id;
-        setIsJumping(true);
-        const t = window.setTimeout(()=>setIsJumping(false), 520);
-        return ()=>window.clearTimeout(t);
-    }, [
-        active?.id,
-        markerLeft
-    ]);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
         className: "panel p-6",
         children: [
@@ -77,16 +63,13 @@ function CvTabs({ tabs, initialTabId }) {
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                         "aria-hidden": true,
-                        className: [
-                            "tab-marker",
-                            isJumping ? "is-jumping" : ""
-                        ].join(" "),
+                        className: "tab-marker",
                         style: {
                             left: `${markerLeft}px`
                         }
                     }, void 0, false, {
                         fileName: "[project]/src/components/common/CvTabs.tsx",
-                        lineNumber: 80,
+                        lineNumber: 67,
                         columnNumber: 9
                     }, this),
                     tabs.map((t)=>{
@@ -116,19 +99,19 @@ function CvTabs({ tabs, initialTabId }) {
                                 children: t.label
                             }, void 0, false, {
                                 fileName: "[project]/src/components/common/CvTabs.tsx",
-                                lineNumber: 111,
+                                lineNumber: 98,
                                 columnNumber: 15
                             }, this)
                         }, t.id, false, {
                             fileName: "[project]/src/components/common/CvTabs.tsx",
-                            lineNumber: 97,
+                            lineNumber: 84,
                             columnNumber: 13
                         }, this);
                     })
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/common/CvTabs.tsx",
-                lineNumber: 74,
+                lineNumber: 61,
                 columnNumber: 7
             }, this),
             active ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -139,13 +122,13 @@ function CvTabs({ tabs, initialTabId }) {
                 children: active.content
             }, void 0, false, {
                 fileName: "[project]/src/components/common/CvTabs.tsx",
-                lineNumber: 118,
+                lineNumber: 105,
                 columnNumber: 9
             }, this) : null
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/common/CvTabs.tsx",
-        lineNumber: 73,
+        lineNumber: 60,
         columnNumber: 5
     }, this);
 }

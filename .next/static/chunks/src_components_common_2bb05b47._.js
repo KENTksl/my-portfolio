@@ -28,8 +28,6 @@ function CvTabs(param) {
     var tabListRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     var tabButtonRefs = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])({});
     var _useState1 = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_sliced_to_array$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(-9999), 2), markerLeft = _useState1[0], setMarkerLeft = _useState1[1];
-    var _useState2 = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_sliced_to_array$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false), 2), isJumping = _useState2[0], setIsJumping = _useState2[1];
-    var lastJumpedTabIdRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(undefined);
     var activeIndex = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
         "CvTabs.useMemo[activeIndex]": function() {
             var idx = tabs.findIndex({
@@ -79,28 +77,6 @@ function CvTabs(param) {
         active === null || active === void 0 ? void 0 : active.id,
         tabs.length
     ]);
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "CvTabs.useEffect": function() {
-            if (!(active === null || active === void 0 ? void 0 : active.id)) return;
-            if (markerLeft < 0) return;
-            if (lastJumpedTabIdRef.current === active.id) return;
-            lastJumpedTabIdRef.current = active.id;
-            setIsJumping(true);
-            var t = window.setTimeout({
-                "CvTabs.useEffect.t": function() {
-                    return setIsJumping(false);
-                }
-            }["CvTabs.useEffect.t"], 520);
-            return ({
-                "CvTabs.useEffect": function() {
-                    return window.clearTimeout(t);
-                }
-            })["CvTabs.useEffect"];
-        }
-    }["CvTabs.useEffect"], [
-        active === null || active === void 0 ? void 0 : active.id,
-        markerLeft
-    ]);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
         className: "panel p-6",
         children: [
@@ -112,16 +88,13 @@ function CvTabs(param) {
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                         "aria-hidden": true,
-                        className: [
-                            "tab-marker",
-                            isJumping ? "is-jumping" : ""
-                        ].join(" "),
+                        className: "tab-marker",
                         style: {
                             left: "".concat(markerLeft, "px")
                         }
                     }, void 0, false, {
                         fileName: "[project]/src/components/common/CvTabs.tsx",
-                        lineNumber: 80,
+                        lineNumber: 67,
                         columnNumber: 9
                     }, this),
                     tabs.map(function(t) {
@@ -153,19 +126,19 @@ function CvTabs(param) {
                                 children: t.label
                             }, void 0, false, {
                                 fileName: "[project]/src/components/common/CvTabs.tsx",
-                                lineNumber: 111,
+                                lineNumber: 98,
                                 columnNumber: 15
                             }, _this)
                         }, t.id, false, {
                             fileName: "[project]/src/components/common/CvTabs.tsx",
-                            lineNumber: 97,
+                            lineNumber: 84,
                             columnNumber: 13
                         }, _this);
                     })
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/common/CvTabs.tsx",
-                lineNumber: 74,
+                lineNumber: 61,
                 columnNumber: 7
             }, this),
             active ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -176,17 +149,17 @@ function CvTabs(param) {
                 children: active.content
             }, void 0, false, {
                 fileName: "[project]/src/components/common/CvTabs.tsx",
-                lineNumber: 118,
+                lineNumber: 105,
                 columnNumber: 9
             }, this) : null
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/common/CvTabs.tsx",
-        lineNumber: 73,
+        lineNumber: 60,
         columnNumber: 5
     }, this);
 }
-_s(CvTabs, "xzpUsE2Ukd19qhVfEKxFfNfCDac=", false, function() {
+_s(CvTabs, "ElmaHHUx2csY90s1rbww1H3Rwis=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useId"]
     ];
